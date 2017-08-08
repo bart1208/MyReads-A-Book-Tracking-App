@@ -38,6 +38,7 @@ body, .app {
 
 .bookshelf-title {
   border-bottom: 1px solid #dedede;
+  text-transform: capitalize;
 }
 .bookshelf-books {
   text-align: center;
@@ -159,6 +160,9 @@ body, .app {
   height: 100%;
   opacity: 0;
   cursor: pointer;
+}
+.book-shelf-changer select option:checked {
+  font-weight: bold;
 }
 
 /* book cover */
