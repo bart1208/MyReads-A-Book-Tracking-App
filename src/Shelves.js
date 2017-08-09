@@ -1,15 +1,24 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 class Shelves extends React.Component {
+  static PropTypes = {
+    books: PropTypes.array.isRequired,
+    onUpdateBookShelf: PropTypes.func.isRequired
+  }
+
   render() {
     const {books, onUpdateBookShelf} = this.props;
-    const booksGroupBy = books.reduce(function (groups, item) {
+
+    let booksGroupBy = books.reduce(function (groups, item) {
       let val = item['shelf'];
       groups[val] = groups[val] || [];
       groups[val].push(item);
       return groups;
     }, {});
+
+    const sortBooksKeys = ['currentlyReading', 'wantToRead', 'read'];
 
     return (
       <div className="list-books">
@@ -18,34 +27,35 @@ class Shelves extends React.Component {
         </div>
         <div className="list-books-content">
           <div>
-            {Object.keys(booksGroupBy).map(shelf => (
+            {sortBooksKeys.map(shelf => (
               <div key={shelf} className="bookshelf">
                 <h2 className="bookshelf-title">{shelf.replace(/([A-Z])/g, ' $1')}</h2>
                 <div className="bookshelf-books">
                   <ol className="books-grid">
-                    {booksGroupBy[shelf].map(book => (
-                      <li key={book.id}>
-                        <div className="book">
-                          <div className="book-top">
-                            <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
-                            <div className="book-shelf-changer">
-                              <select
-                                defaultValue={book.shelf}
-                                onChange={(e) => onUpdateBookShelf(book, e.target.value)}
-                              >
-                                <option value="none" disabled>Move to...</option>
-                                <option value="currentlyReading">Currently Reading</option>
-                                <option value="wantToRead">Want to Read</option>
-                                <option value="read">Read</option>
-                                <option value="none">None</option>
-                              </select>
+                    {booksGroupBy[shelf] !== undefined &&
+                      booksGroupBy[shelf].map(book => (
+                        <li key={book.id}>
+                          <div className="book">
+                            <div className="book-top">
+                              <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
+                              <div className="book-shelf-changer">
+                                <select
+                                  defaultValue={book.shelf}
+                                  onChange={(e) => onUpdateBookShelf(book, e.target.value)}
+                                >
+                                  <option value="none" disabled>Move to...</option>
+                                  <option value="currentlyReading">Currently Reading</option>
+                                  <option value="wantToRead">Want to Read</option>
+                                  <option value="read">Read</option>
+                                  <option value="none">None</option>
+                                </select>
+                              </div>
                             </div>
+                            <div className="book-title">{book.title}</div>
+                            <div className="book-authors">{book.authors.join(', ')}</div>
                           </div>
-                          <div className="book-title">{book.title}</div>
-                          <div className="book-authors">{book.authors.join(', ')}</div>
-                        </div>
-                      </li>
-                    ))}
+                        </li>
+                      ))}
                   </ol>
                 </div>
               </div>

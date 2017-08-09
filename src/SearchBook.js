@@ -8,7 +8,7 @@ class SearchBook extends React.Component {
   }
 
   render() {
-    const {books} = this.props;
+    const {books, onUpdateBookShelf} = this.props;
     const {query} = this.state;
 
     let showingBooks = [];
@@ -40,7 +40,10 @@ class SearchBook extends React.Component {
                   <div className="book-top">
                     <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
                     <div className="book-shelf-changer">
-                      <select>
+                      <select
+                        defaultValue={book.shelf}
+                        onChange={(e) => onUpdateBookShelf(book, e.target.value)}
+                      >
                         <option value="none" disabled>Move to...</option>
                         <option value="currentlyReading">Currently Reading</option>
                         <option value="wantToRead">Want to Read</option>
