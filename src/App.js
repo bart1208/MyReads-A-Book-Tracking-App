@@ -12,10 +12,9 @@ class BooksApp extends React.Component {
 
   updateBookShelf = (book, shelf) => {
     BooksAPI.update(book, shelf).then((res) => {
-      const newBooks = this.state.books.map((bookElem) => (
-        book.id === bookElem.id ? Object.assign({}, bookElem, {shelf: shelf}) : bookElem
-      ));
-      this.setState({ books: newBooks });
+      BooksAPI.getAll().then((books) => {
+        this.setState({ books });
+      })
     })
   }
 

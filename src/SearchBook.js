@@ -1,21 +1,30 @@
 import React from 'react';
-import escapeRegExp from 'escape-string-regexp';
 import { Link } from 'react-router-dom';
+import * as BooksAPI from './BooksAPI';
 
 class SearchBook extends React.Component {
   state = {
-    query: ''
+    booksApiReturns: []
+  }
+
+  searchAPI = (event) => {
+    const query = event.target.value.trim();
+    BooksAPI.search(query, 15).then(books => {
+      this.setState({booksApiReturns: Array.isArray(books) ? books : []});
+    })
   }
 
   render() {
     const {books, onUpdateBookShelf} = this.props;
-    const {query} = this.state;
+    const {booksApiReturns} = this.state;
 
-    let showingBooks = [];
-    if (query) {
-      const match = new RegExp(escapeRegExp(query), 'i');
-      showingBooks = books.filter((book) => match.test(book.title));
-    }
+    booksApiReturns.forEach(bookSearch => {
+      books.forEach(bookSchelves => {
+        if (bookSearch.id === bookSchelves.id) {
+          bookSearch.shelf = bookSchelves.shelf;
+        }
+      })
+    })
 
     return (
       <div className="search-books">
@@ -25,23 +34,28 @@ class SearchBook extends React.Component {
             <input
               type="text"
               placeholder="Search by title or author"
-              value={query}
               onChange={(event) => (
-                this.setState({query: event.target.value.trim()})
+                this.searchAPI(event)
               )}
             />
           </div>
         </div>
         <div className="search-books-results">
           <ol className="books-grid">
-            {showingBooks.map((book) => (
+            {booksApiReturns.map((book) => (
               <li key={book.id}>
                 <div className="book">
                   <div className="book-top">
-                    <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
+                    <div className="book-cover"
+                      style={{
+                        width: 128,
+                        height: 193,
+                        backgroundImage: `url(${book.imageLinks ? book.imageLinks.thumbnail : ''})`
+                      }}>
+                    </div>
                     <div className="book-shelf-changer">
                       <select
-                        defaultValue={book.shelf}
+                        defaultValue={book.shelf ? book.shelf : 'none'}
                         onChange={(e) => onUpdateBookShelf(book, e.target.value)}
                       >
                         <option value="none" disabled>Move to...</option>
@@ -53,7 +67,7 @@ class SearchBook extends React.Component {
                     </div>
                   </div>
                   <div className="book-title">{book.title}</div>
-                  <div className="book-authors">{book.authors.join(', ')}</div>
+                  <div className="book-authors">{book.authors ? book.authors.join(', ') : "None"}</div>
                 </div>
               </li>
             ))}
