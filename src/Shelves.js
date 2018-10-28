@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 class Shelves extends React.Component {
-  static PropTypes = {
+  static propTypes = {
     books: PropTypes.array.isRequired,
     onUpdateBookShelf: PropTypes.func.isRequired
   }
